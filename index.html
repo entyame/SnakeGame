@@ -22,17 +22,205 @@
             user-select: none;
         }
 
+        .app {
+            display: flex;
+            align-items: stretch;
+            gap: 20px;
+        }
+
+        /* ============================================================
+           左侧面板
+        ============================================================ */
+        .side-panel {
+            width: 195px;
+            background: #12122a;
+            border: 2px solid #2a2a4a;
+            border-radius: 10px;
+            padding: 16px 14px;
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+            color: #ccc;
+            font-size: 13px;
+            letter-spacing: 0.5px;
+        }
+
+        .panel-section {
+            border-bottom: 1px solid #2a2a4a;
+            padding-bottom: 14px;
+        }
+        .panel-section:last-child {
+            border-bottom: none;
+            padding-bottom: 0;
+        }
+
+        .panel-title {
+            color: #e94560;
+            font-weight: bold;
+            font-size: 12px;
+            letter-spacing: 2px;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+        }
+
+        /* 速度滑块 */
+        .speed-slider {
+            -webkit-appearance: none;
+            width: 100%;
+            height: 6px;
+            border-radius: 3px;
+            background: linear-gradient(90deg, #00d2ff, #e94560);
+            outline: none;
+            cursor: pointer;
+        }
+        .speed-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #fff;
+            border: 2px solid #e94560;
+            cursor: pointer;
+        }
+        .speed-slider::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #fff;
+            border: 2px solid #e94560;
+            cursor: pointer;
+        }
+
+        .speed-labels {
+            display: flex;
+            justify-content: space-between;
+            font-size: 10px;
+            color: #666;
+            margin-top: 2px;
+        }
+
+        .speed-current {
+            text-align: center;
+            font-size: 22px;
+            font-weight: bold;
+            color: #00d2ff;
+            margin-top: 4px;
+        }
+
+        /* 道具图鉴 */
+        .item-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 6px;
+            font-size: 11px;
+        }
+        .item-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 3px;
+            flex-shrink: 0;
+        }
+        .item-dot.golden {
+            background: #ffd700;
+            box-shadow: 0 0 6px #ffd700;
+        }
+        .item-dot.cherry {
+            background: #ff69b4;
+            box-shadow: 0 0 6px #ff69b4;
+        }
+        .item-dot.poison {
+            background: #9b59b6;
+            box-shadow: 0 0 6px #9b59b6;
+        }
+        .item-dot.normal {
+            background: #ff6b6b;
+            box-shadow: 0 0 6px #ff6b6b;
+        }
+        .item-info {
+            line-height: 1.3;
+        }
+        .item-name {
+            color: #fff;
+            font-weight: bold;
+        }
+        .item-desc {
+            color: #777;
+            font-size: 10px;
+        }
+
+        /* 实时统计 */
+        .stat-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 6px;
+        }
+        .stat-label {
+            color: #888;
+            font-size: 11px;
+        }
+        .stat-value {
+            color: #fff;
+            font-weight: bold;
+            font-size: 14px;
+        }
+        .stat-value.combo {
+            color: #ffd700;
+        }
+        .stat-value.combo-fire {
+            color: #ff6b6b;
+            animation: pulse 0.3s ease-in-out;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.3); }
+        }
+
+        /* 按钮 */
+        .btn-row {
+            display: flex;
+            gap: 8px;
+        }
+        .btn {
+            flex: 1;
+            padding: 8px 0;
+            border-radius: 6px;
+            border: 1px solid #2a2a4a;
+            background: #1a1a3a;
+            color: #ccc;
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 12px;
+            letter-spacing: 0.5px;
+            transition: all 0.2s;
+            text-align: center;
+        }
+        .btn:hover {
+            background: #252550;
+            border-color: #e94560;
+        }
+        .btn.active {
+            background: #2a1a30;
+            border-color: #e94560;
+            color: #e94560;
+        }
+        .btn.muted-btn {
+            flex: 0 0 auto;
+            width: 38px;
+            padding: 8px 0;
+            font-size: 16px;
+        }
+
+        /* ============================================================
+           游戏区
+        ============================================================ */
         .game-wrapper {
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 12px;
-        }
-
-        .top-bar {
-            display: flex;
-            align-items: center;
-            gap: 16px;
+            gap: 10px;
         }
 
         .score-bar {
@@ -51,31 +239,6 @@
             color: #ffd700;
         }
 
-        .btn-mute {
-            width: 44px;
-            height: 44px;
-            border-radius: 8px;
-            border: 2px solid #e94560;
-            background: #16213e;
-            color: #ffffff;
-            font-size: 20px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: background 0.2s;
-            line-height: 1;
-        }
-
-        .btn-mute:hover {
-            background: #1f2d4a;
-        }
-
-        .btn-mute.muted {
-            border-color: #555;
-            color: #555;
-        }
-
         canvas {
             border-radius: 4px;
             display: block;
@@ -83,7 +246,7 @@
 
         .controls-hint {
             color: #8888aa;
-            font-size: 13px;
+            font-size: 12px;
             letter-spacing: 1px;
             text-align: center;
             line-height: 1.6;
@@ -96,19 +259,94 @@
     </style>
 </head>
 <body>
-    <div class="game-wrapper">
-        <div class="top-bar">
+    <div class="app">
+        <!-- ============================================================
+             左侧面板
+        ============================================================ -->
+        <div class="side-panel">
+            <!-- 速度控制 -->
+            <div class="panel-section">
+                <div class="panel-title">⚡ Speed</div>
+                <input type="range" class="speed-slider" id="speedSlider"
+                       min="0.5" max="2.5" step="0.1" value="1.0">
+                <div class="speed-labels">
+                    <span>0.5x</span><span>1.5x</span><span>2.5x</span>
+                </div>
+                <div class="speed-current" id="speedDisplay">1.0x</div>
+            </div>
+
+            <!-- 道具图鉴 -->
+            <div class="panel-section">
+                <div class="panel-title">🎁 Items</div>
+                <div class="item-row">
+                    <div class="item-dot normal"></div>
+                    <div class="item-info">
+                        <div class="item-name">🍎 Apple</div>
+                        <div class="item-desc">+10 pts, always</div>
+                    </div>
+                </div>
+                <div class="item-row">
+                    <div class="item-dot golden"></div>
+                    <div class="item-info">
+                        <div class="item-name">⭐ Golden</div>
+                        <div class="item-desc">+30 pts, fades in 7s</div>
+                    </div>
+                </div>
+                <div class="item-row">
+                    <div class="item-dot cherry"></div>
+                    <div class="item-info">
+                        <div class="item-name">🍒 Cherry</div>
+                        <div class="item-desc">+50 pts, fades in 5s</div>
+                    </div>
+                </div>
+                <div class="item-row">
+                    <div class="item-dot poison"></div>
+                    <div class="item-info">
+                        <div class="item-name">💀 Poison</div>
+                        <div class="item-desc">−5 pts, avoid!</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 实时统计 -->
+            <div class="panel-section">
+                <div class="panel-title">📊 Stats</div>
+                <div class="stat-row">
+                    <span class="stat-label">Combo</span>
+                    <span class="stat-value combo" id="comboDisplay">0</span>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-label">Best Combo</span>
+                    <span class="stat-value" id="bestComboDisplay">0</span>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-label">Speed</span>
+                    <span class="stat-value" id="speedStat">1.0x</span>
+                </div>
+            </div>
+
+            <!-- 按钮 -->
+            <div class="btn-row">
+                <button class="btn" id="btnPause" title="Pause / Resume">⏯ Pause</button>
+                <button class="btn muted-btn" id="btnMute" title="Toggle Music">🔊</button>
+            </div>
+        </div>
+
+        <!-- ============================================================
+             游戏主区
+        ============================================================ -->
+        <div class="game-wrapper">
             <div class="score-bar">
                 Score: <span id="score">0</span>&nbsp;&nbsp;&nbsp;
                 🏆 High Score: <span class="high" id="highScore">0</span>
             </div>
-            <button class="btn-mute" id="btnMute" title="Toggle Music / SFX">🔊</button>
-        </div>
-        <canvas id="gameCanvas"></canvas>
-        <div class="controls-hint">
-            <span>↑↓←→</span> or <span>WASD</span> to move &nbsp;|&nbsp;
-            <span>Space</span> to restart &nbsp;|&nbsp;
-            <span>M</span> toggle music
+            <canvas id="gameCanvas"></canvas>
+            <div class="controls-hint">
+                <span>↑↓←→</span> / <span>WASD</span> move &nbsp;|&nbsp;
+                <span>Space</span> restart &nbsp;|&nbsp;
+                <span>M</span> music &nbsp;|&nbsp;
+                <span>P</span> pause
+            </div>
         </div>
     </div>
 
@@ -120,18 +358,27 @@
         const GRID_SIZE = 20;
         const COLS = CANVAS_SIZE / GRID_SIZE;
         const ROWS = CANVAS_SIZE / GRID_SIZE;
-        const INITIAL_SPEED = 120;   // 初始移动间隔（毫秒）
+        const BASE_SPEED = 120;    // 基础移动间隔（ms），1.0x 时的值
         const MIN_SPEED = 40;
         const SPEED_STEP = 2;
         const SCORE_PER_FOOD = 10;
+        const COMBO_WINDOW = 2000; // combo 有效时间窗口（ms）
+        const COMBO_BONUS = 5;     // 每层 combo 额外加分
 
         // 颜色方案
         const BG_COLOR = "#1a1a2e";
         const BORDER_COLOR = "#e94560";
         const SNAKE_HEAD_COLOR = "#00d2ff";
         const SNAKE_BODY_COLORS = ["#00d2ff", "#00b4d8", "#0096c7", "#0077b6", "#023e8a"];
-        const FOOD_COLOR = "#ff6b6b";
         const GAME_OVER_SNAKE_COLOR = "#e94560";
+
+        // 食物类型定义
+        const FOOD_TYPES = [
+            { type: 'normal', color: '#ff6b6b', points: 10,  chance: 0.80, name: 'Apple',  emoji: '🍎', timer: 0,     glow: '#ff6b6b', shape: 'circle' },
+            { type: 'golden', color: '#ffd700', points: 30, chance: 0.12, name: 'Golden', emoji: '⭐', timer: 7000,  glow: '#ffd700', shape: 'star' },
+            { type: 'cherry', color: '#ff69b4', points: 50, chance: 0.05, name: 'Cherry', emoji: '🍒', timer: 5000,  glow: '#ff69b4', shape: 'heart' },
+            { type: 'poison', color: '#9b59b6', points: -5,  chance: 0.03, name: 'Poison', emoji: '💀', timer: 6000,  glow: '#9b59b6', shape: 'diamond', minScore: 30 },
+        ];
 
         // ============================================================
         // DOM 元素
@@ -140,7 +387,13 @@
         const ctx = canvas.getContext("2d");
         const scoreEl = document.getElementById("score");
         const highScoreEl = document.getElementById("highScore");
+        const speedSlider = document.getElementById("speedSlider");
+        const speedDisplay = document.getElementById("speedDisplay");
+        const speedStat = document.getElementById("speedStat");
+        const comboDisplay = document.getElementById("comboDisplay");
+        const bestComboDisplay = document.getElementById("bestComboDisplay");
         const btnMute = document.getElementById("btnMute");
+        const btnPause = document.getElementById("btnPause");
 
         canvas.width = CANVAS_SIZE;
         canvas.height = CANVAS_SIZE;
@@ -150,35 +403,41 @@
         // ============================================================
         let snake = [];
         let food = { x: 0, y: 0 };
+        let currentFoodType = FOOD_TYPES[0];
+        let foodSpawnTime = 0;
         let direction = "stop";
         let nextDirection = "stop";
         let score = 0;
         let highScore = 0;
-        let speed = INITIAL_SPEED;
+        let internalSpeed = BASE_SPEED; // 吃食物累积加速后的内部速度
+        let speedMultiplier = 1.0;       // 用户手动调速倍率
         let running = true;
+        let paused = false;
 
-        // requestAnimationFrame 计时
+        // Combo
+        let comboCount = 0;
+        let bestCombo = 0;
+        let lastEatTime = 0;
+
+        // 粒子 & 浮动文字
+        let particles = [];
+        let floatingTexts = [];
+
+        // requestAnimationFrame
         let lastTime = 0;
         let accumulator = 0;
         let animFrameId = null;
+        let pauseAccumulator = 0; // 暂停期间经过的时间（不计入食物过期）
 
         // ============================================================
         // 音频引擎 — 8-bit Chiptune
         // ============================================================
         const Audio = {
-            ctx: null,
-            masterGain: null,
-            musicGain: null,
-            sfxGain: null,
-            muted: false,
-            musicStarted: false,
-            musicTimer: null,
-            musicNoteIdx: 0,
-            musicNextTime: 0,
-            bassNoteIdx: 0,
-            bassNextTime: 0,
+            ctx: null, masterGain: null, musicGain: null, sfxGain: null,
+            muted: false, musicStarted: false, musicTimer: null,
+            musicNoteIdx: 0, musicNextTime: 0, bassNoteIdx: 0, bassNextTime: 0,
+            stepDuration: 0.14,
 
-            // 频率表
             noteToFreq(note) {
                 const map = {
                     'C2': 65.41, 'D2': 73.42, 'E2': 82.41, 'F2': 87.31,
@@ -194,10 +453,6 @@
                 return map[note] || 0;
             },
 
-            // 每个 step 的时长（秒）
-            stepDuration: 0.14,
-
-            // 主旋律：[音符, steps]
             melody: [
                 ['E5', 1], ['E5', 1], ['E5', 1], ['C5', 1], ['E5', 2], ['G5', 2],
                 ['A5', 1], ['G5', 1], ['E5', 1], ['C5', 1], ['D5', 1], ['E5', 1], ['C5', 1], ['D5', 1],
@@ -208,8 +463,6 @@
                 ['E5', 1], ['C5', 1], ['D5', 1], ['E5', 1], ['G5', 2], ['A5', 2],
                 ['G5', 1], ['E5', 1], ['C5', 1], ['D5', 1], ['E5', 1], ['C5', 1], ['D5', 2],
             ],
-
-            // 低音线：[音符, steps]
             bassLine: [
                 ['C3', 4], ['G3', 4], ['A3', 8],
                 ['F3', 4], ['C3', 4], ['G3', 8],
@@ -217,7 +470,6 @@
                 ['C3', 8], ['G3', 8],
             ],
 
-            // 初始化（必须在用户交互后调用）
             init() {
                 if (this.ctx) return;
                 try {
@@ -225,28 +477,22 @@
                     this.masterGain = this.ctx.createGain();
                     this.masterGain.gain.value = 0.25;
                     this.masterGain.connect(this.ctx.destination);
-
                     this.musicGain = this.ctx.createGain();
                     this.musicGain.gain.value = 0.18;
                     this.musicGain.connect(this.masterGain);
-
                     this.sfxGain = this.ctx.createGain();
                     this.sfxGain.gain.value = 0.35;
                     this.sfxGain.connect(this.masterGain);
-                } catch (e) {
-                    console.warn("Web Audio API not available");
-                }
+                } catch (e) { /* ignore */ }
             },
 
-            // 播放一个音符
             playNote(freq, startTime, duration, type, gainNode) {
-                if (!this.ctx || this.muted) return;
-                if (freq <= 0) return;  // 休止符
+                if (!this.ctx || this.muted || freq <= 0) return;
                 const osc = this.ctx.createOscillator();
                 const env = this.ctx.createGain();
                 osc.type = type || 'square';
                 osc.frequency.value = freq;
-                const vol = gainNode === this.musicGain ? 0.18 : 0.35;
+                const vol = gainNode === this.sfxGain ? 0.35 : 0.18;
                 env.gain.setValueAtTime(vol, startTime);
                 env.gain.setValueAtTime(vol * 0.6, startTime + duration * 0.3);
                 env.gain.exponentialRampToValueAtTime(0.001, startTime + duration);
@@ -256,19 +502,11 @@
                 osc.stop(startTime + duration + 0.01);
             },
 
-            // 调度前方约 2 秒的音乐
             scheduleAhead() {
                 if (!this.ctx || this.muted) return;
                 const lookAhead = 2.0;
                 const now = this.ctx.currentTime;
-
-                // 初始化
-                if (this.musicNextTime === 0) {
-                    this.musicNextTime = now + 0.1;
-                    this.bassNextTime = now + 0.1;
-                }
-
-                // 调度旋律
+                if (this.musicNextTime === 0) { this.musicNextTime = now + 0.1; this.bassNextTime = now + 0.1; }
                 while (this.musicNextTime < now + lookAhead) {
                     const [note, steps] = this.melody[this.musicNoteIdx];
                     const dur = steps * this.stepDuration;
@@ -276,8 +514,6 @@
                     this.musicNextTime += dur;
                     this.musicNoteIdx = (this.musicNoteIdx + 1) % this.melody.length;
                 }
-
-                // 调度低音
                 while (this.bassNextTime < now + lookAhead) {
                     const [note, steps] = this.bassLine[this.bassNoteIdx];
                     const dur = steps * this.stepDuration;
@@ -292,77 +528,131 @@
                 this.init();
                 if (!this.ctx) return;
                 this.musicStarted = true;
-                this.musicNoteIdx = 0;
-                this.bassNoteIdx = 0;
-                this.musicNextTime = 0;
-                this.bassNextTime = 0;
+                this.musicNoteIdx = 0; this.bassNoteIdx = 0;
+                this.musicNextTime = 0; this.bassNextTime = 0;
                 this.scheduleAhead();
-                // 每 150ms 检查是否需要补充调度
                 this.musicTimer = setInterval(() => this.scheduleAhead(), 150);
             },
 
             stopMusic() {
-                if (this.musicTimer) {
-                    clearInterval(this.musicTimer);
-                    this.musicTimer = null;
-                }
+                if (this.musicTimer) { clearInterval(this.musicTimer); this.musicTimer = null; }
                 this.musicStarted = false;
-                this.musicNextTime = 0;
-                this.bassNextTime = 0;
+                this.musicNextTime = 0; this.bassNextTime = 0;
             },
 
-            // 🍎 吃食物音效 — 快速上行琶音
-            playEat() {
+            playEat(points) {
                 if (!this.ctx || this.muted) return;
                 const now = this.ctx.currentTime;
-                const notes = ['C5', 'E5', 'G5', 'C6'];
-                notes.forEach((n, i) => {
-                    this.playNote(this.noteToFreq(n), now + i * 0.04, 0.12, 'square', this.sfxGain);
-                });
+                if (points > 0) {
+                    const notes = points >= 40 ? ['C5', 'E5', 'G5', 'C6', 'E6']
+                        : points >= 25 ? ['C5', 'E5', 'G5', 'C6'] : ['E5', 'G5', 'C6'];
+                    notes.forEach((n, i) => this.playNote(this.noteToFreq(n), now + i * 0.04, 0.12, 'square', this.sfxGain));
+                } else {
+                    ['G4', 'Db4', 'G3'].forEach((n, i) =>
+                        this.playNote(this.noteToFreq(n), now + i * 0.15, 0.25, 'sawtooth', this.sfxGain));
+                }
             },
 
-            // 💀 游戏结束音效 — 下行悲鸣
             playGameOver() {
                 if (!this.ctx || this.muted) return;
                 const now = this.ctx.currentTime;
-                const notes = ['G5', 'E5', 'C5', 'G4', 'E4', 'C4'];
-                notes.forEach((n, i) => {
-                    this.playNote(this.noteToFreq(n), now + i * 0.12, 0.2, 'square', this.sfxGain);
-                });
+                ['G5', 'E5', 'C5', 'G4', 'E4', 'C4'].forEach((n, i) =>
+                    this.playNote(this.noteToFreq(n), now + i * 0.12, 0.2, 'square', this.sfxGain));
             },
 
             toggle() {
-                this.init();
-                if (!this.ctx) return;
+                this.init(); if (!this.ctx) return;
                 this.muted = !this.muted;
-                if (this.muted) {
-                    this.stopMusic();
-                    btnMute.textContent = '🔇';
-                    btnMute.classList.add('muted');
-                } else {
-                    btnMute.textContent = '🔊';
-                    btnMute.classList.remove('muted');
-                    this.startMusic();
-                }
+                if (this.muted) { this.stopMusic(); btnMute.textContent = '🔇'; btnMute.classList.add('active'); }
+                else { btnMute.textContent = '🔊'; btnMute.classList.remove('active'); this.startMusic(); }
             },
         };
 
         // ============================================================
-        // 高分存取（localStorage）
+        // 辅助函数
         // ============================================================
+        function effectiveSpeed() {
+            return Math.max(MIN_SPEED, internalSpeed / speedMultiplier);
+        }
+
+        function secondsToMs(ms) { return ms; } // 已经在毫秒
+
         function loadHighScore() {
-            try {
-                const saved = localStorage.getItem("snake_high_score");
-                highScore = saved ? parseInt(saved, 10) : 0;
-            } catch (e) {
-                highScore = 0;
+            try { const v = localStorage.getItem("snake_high_score"); highScore = v ? parseInt(v, 10) : 0; }
+            catch (e) { highScore = 0; }
+        }
+        function saveHighScore() {
+            try { localStorage.setItem("snake_high_score", String(highScore)); } catch (e) { /* */ }
+        }
+
+        // ============================================================
+        // 食物生成
+        // ============================================================
+        function pickFoodType() {
+            const roll = Math.random();
+            let cumulative = 0;
+            for (const ft of FOOD_TYPES) {
+                cumulative += ft.chance;
+                if (roll <= cumulative) {
+                    // 毒蘑菇需要最低分数
+                    if (ft.minScore && score < ft.minScore) continue;
+                    return ft;
+                }
+            }
+            return FOOD_TYPES[0]; // fallback
+        }
+
+        function spawnFood() {
+            const occupied = new Set(snake.map(seg => `${seg.x},${seg.y}`));
+            const freeCells = [];
+            for (let col = 0; col < COLS; col++) {
+                for (let row = 0; row < ROWS; row++) {
+                    const key = `${col * GRID_SIZE},${row * GRID_SIZE}`;
+                    if (!occupied.has(key)) freeCells.push({ x: col * GRID_SIZE, y: row * GRID_SIZE });
+                }
+            }
+            if (freeCells.length === 0) { gameOver(); return; }
+            const pick = freeCells[Math.floor(Math.random() * freeCells.length)];
+            food.x = pick.x;
+            food.y = pick.y;
+            currentFoodType = pickFoodType();
+            foodSpawnTime = performance.now();
+        }
+
+        function foodRemainingMs() {
+            if (currentFoodType.timer <= 0) return Infinity;
+            return Math.max(0, currentFoodType.timer - (performance.now() - foodSpawnTime));
+        }
+
+        // ============================================================
+        // 粒子特效
+        // ============================================================
+        function spawnParticles(x, y, color, count) {
+            for (let i = 0; i < count; i++) {
+                const angle = Math.random() * Math.PI * 2;
+                const spd = 60 + Math.random() * 140;
+                particles.push({
+                    x: x + GRID_SIZE / 2,
+                    y: y + GRID_SIZE / 2,
+                    vx: Math.cos(angle) * spd,
+                    vy: Math.sin(angle) * spd,
+                    life: 0.35 + Math.random() * 0.4,
+                    maxLife: 0.35 + Math.random() * 0.4,
+                    color,
+                    size: 2 + Math.random() * 4,
+                });
             }
         }
 
-        function saveHighScore() {
-            try {
-                localStorage.setItem("snake_high_score", String(highScore));
-            } catch (e) { /* 忽略 */ }
+        function spawnFloatingText(x, y, text, color) {
+            floatingTexts.push({
+                x: x + GRID_SIZE / 2,
+                y: y,
+                text,
+                life: 0.9,
+                maxLife: 0.9,
+                color,
+            });
         }
 
         // ============================================================
@@ -379,77 +669,89 @@
             direction = "right";
             nextDirection = "right";
             score = 0;
-            speed = INITIAL_SPEED;
+            internalSpeed = BASE_SPEED;
             running = true;
+            paused = false;
+            btnPause.textContent = '⏯ Pause';
             accumulator = 0;
             lastTime = 0;
+            pauseAccumulator = 0;
+            comboCount = 0;
+            bestCombo = 0;
+            lastEatTime = 0;
+            particles = [];
+            floatingTexts = [];
             scoreEl.textContent = "0";
+            comboDisplay.textContent = "0";
+            bestComboDisplay.textContent = "0";
+            updateSpeedUI();
             spawnFood();
         }
 
-        function spawnFood() {
-            const occupied = new Set(snake.map(seg => `${seg.x},${seg.y}`));
-            const freeCells = [];
-            for (let col = 0; col < COLS; col++) {
-                for (let row = 0; row < ROWS; row++) {
-                    const key = `${col * GRID_SIZE},${row * GRID_SIZE}`;
-                    if (!occupied.has(key)) {
-                        freeCells.push({ x: col * GRID_SIZE, y: row * GRID_SIZE });
-                    }
-                }
-            }
-            if (freeCells.length === 0) {
-                gameOver();
-                return;
-            }
-            const pick = freeCells[Math.floor(Math.random() * freeCells.length)];
-            food.x = pick.x;
-            food.y = pick.y;
+        function updateSpeedUI() {
+            speedDisplay.textContent = speedMultiplier.toFixed(1) + 'x';
+            speedStat.textContent = speedMultiplier.toFixed(1) + 'x';
+            speedSlider.value = speedMultiplier;
         }
 
         // ============================================================
-        // 输入处理 — 只记录方向意图，不干扰游戏循环
+        // 输入处理
         // ============================================================
         const opposites = { up: "down", down: "up", left: "right", right: "left" };
 
         function handleDirectionInput(newDir) {
-            // 忽略反向指令
-            if (opposites[newDir] !== direction) {
-                nextDirection = newDir;
-            }
+            if (opposites[newDir] !== direction) nextDirection = newDir;
         }
 
         document.addEventListener("keydown", (e) => {
-            // 首次交互时初始化音频
-            if (!Audio.ctx) {
-                Audio.init();
-                Audio.startMusic();
-            }
+            // 首次交互初始化音频
+            if (!Audio.ctx) { Audio.init(); Audio.startMusic(); }
 
-            // 游戏结束状态 — 只响应空格
+            // 全局按键
+            if (e.code === "KeyM") { e.preventDefault(); Audio.toggle(); return; }
+            if (e.code === "KeyP") { e.preventDefault(); togglePause(); return; }
+
+            // 游戏结束
             if (!running) {
-                if (e.code === "Space") {
-                    e.preventDefault();
-                    restart();
-                }
+                if (e.code === "Space") { e.preventDefault(); restart(); }
                 return;
             }
 
-            // 方向输入 — 仅记录意图，不阻塞、不重复处理
+            // 暂停中只响应 P
+            if (paused) return;
+
             switch (e.code) {
                 case "ArrowUp":    case "KeyW": e.preventDefault(); handleDirectionInput("up");    break;
                 case "ArrowDown":  case "KeyS": e.preventDefault(); handleDirectionInput("down");  break;
                 case "ArrowLeft":  case "KeyA": e.preventDefault(); handleDirectionInput("left");  break;
                 case "ArrowRight": case "KeyD": e.preventDefault(); handleDirectionInput("right"); break;
-                case "KeyM":       e.preventDefault(); Audio.toggle(); break;
             }
         });
 
-        // 静音按钮
-        btnMute.addEventListener("click", () => {
-            Audio.init();
-            Audio.startMusic();
-            Audio.toggle();
+        function togglePause() {
+            if (!running) return;
+            paused = !paused;
+            btnPause.textContent = paused ? '▶ Resume' : '⏯ Pause';
+            if (!paused) {
+                lastTime = 0;
+                accumulator = 0;
+                animFrameId = requestAnimationFrame(gameLoop);
+                if (!Audio.muted) Audio.startMusic();
+            } else {
+                if (animFrameId) { cancelAnimationFrame(animFrameId); animFrameId = null; }
+                Audio.stopMusic();
+            }
+            draw();
+        }
+
+        // 侧边栏按钮事件
+        btnMute.addEventListener("click", () => { Audio.init(); Audio.startMusic(); Audio.toggle(); });
+        btnPause.addEventListener("click", togglePause);
+
+        // 速度滑块
+        speedSlider.addEventListener("input", () => {
+            speedMultiplier = parseFloat(speedSlider.value);
+            updateSpeedUI();
         });
 
         // ============================================================
@@ -471,33 +773,59 @@
             }
 
             // 撞墙
-            if (newX < 0 || newX >= CANVAS_SIZE || newY < 0 || newY >= CANVAS_SIZE) {
-                gameOver();
-                return;
-            }
+            if (newX < 0 || newX >= CANVAS_SIZE || newY < 0 || newY >= CANVAS_SIZE) { gameOver(); return; }
 
-            // 撞自己（跳过最后一段尾巴，因为它即将被移除）
+            // 撞自己
             for (let i = 0; i < snake.length - 1; i++) {
-                if (snake[i].x === newX && snake[i].y === newY) {
-                    gameOver();
-                    return;
-                }
+                if (snake[i].x === newX && snake[i].y === newY) { gameOver(); return; }
             }
 
-            // 插入新头部
             snake.unshift({ x: newX, y: newY });
 
             // 吃到食物
             if (newX === food.x && newY === food.y) {
-                score += SCORE_PER_FOOD;
-                scoreEl.textContent = score;
-                if (score > highScore) {
-                    highScore = score;
-                    highScoreEl.textContent = highScore;
-                    saveHighScore();
+                const ft = currentFoodType;
+                const now = performance.now();
+
+                // Combo 计算
+                if (lastEatTime > 0 && (now - lastEatTime) < COMBO_WINDOW) {
+                    comboCount++;
+                } else {
+                    comboCount = 1;
                 }
-                speed = Math.max(MIN_SPEED, speed - SPEED_STEP);
-                Audio.playEat();
+                lastEatTime = now;
+                if (comboCount > bestCombo) {
+                    bestCombo = comboCount;
+                    bestComboDisplay.textContent = bestCombo;
+                }
+                comboDisplay.textContent = comboCount;
+                // Combo 闪烁动画
+                if (comboCount >= 3) {
+                    comboDisplay.classList.remove('combo-fire');
+                    void comboDisplay.offsetWidth;
+                    comboDisplay.classList.add('combo-fire');
+                }
+
+                const bonusPoints = (comboCount - 1) * COMBO_BONUS;
+                const totalPoints = ft.points + bonusPoints;
+
+                score += totalPoints;
+                scoreEl.textContent = score;
+                if (score > highScore) { highScore = score; highScoreEl.textContent = highScore; saveHighScore(); }
+
+                // 加速
+                internalSpeed = Math.max(MIN_SPEED, internalSpeed - SPEED_STEP);
+
+                // 特效
+                const particleCount = ft.type === 'normal' ? 10 : ft.points >= 40 ? 18 : 14;
+                spawnParticles(food.x, food.y, ft.color, particleCount);
+
+                let label = (totalPoints >= 0 ? '+' : '') + totalPoints;
+                if (comboCount >= 3) label += ` COMBO x${comboCount}!`;
+                spawnFloatingText(food.x, food.y, label, ft.color);
+
+                Audio.playEat(ft.points);
+
                 spawnFood();
             } else {
                 snake.pop();
@@ -508,14 +836,17 @@
             running = false;
             direction = "stop";
             nextDirection = "stop";
+            paused = false;
+            btnPause.textContent = '⏯ Pause';
             Audio.stopMusic();
             Audio.playGameOver();
         }
 
         function restart() {
+            if (animFrameId) { cancelAnimationFrame(animFrameId); animFrameId = null; }
             initGame();
             Audio.stopMusic();
-            Audio.startMusic();
+            if (!Audio.muted) Audio.startMusic();
             lastTime = 0;
             accumulator = 0;
             draw();
@@ -525,6 +856,92 @@
         // ============================================================
         // 渲染
         // ============================================================
+        function drawFood() {
+            const ft = currentFoodType;
+            const cx = food.x + GRID_SIZE / 2;
+            const cy = food.y + GRID_SIZE / 2;
+            const r = GRID_SIZE / 2 - 2;
+
+            // 发光
+            ctx.shadowColor = ft.glow;
+            ctx.shadowBlur = ft.type === 'golden' ? 14 : ft.type === 'cherry' ? 12 : ft.type === 'poison' ? 10 : 8;
+
+            // 特殊食物闪烁提示（剩余时间 < 2秒）
+            const remaining = foodRemainingMs();
+            let alpha = 1;
+            if (ft.timer > 0 && remaining < 2000) {
+                alpha = 0.4 + 0.6 * Math.abs(Math.sin(performance.now() / 150));
+            }
+
+            ctx.globalAlpha = alpha;
+            ctx.fillStyle = ft.color;
+
+            switch (ft.shape) {
+                case 'star':
+                    drawStar(cx, cy, r * 0.6, r, 5);
+                    break;
+                case 'heart':
+                    drawHeart(cx, cy, r);
+                    break;
+                case 'diamond':
+                    drawDiamond(cx, cy, r);
+                    break;
+                default:
+                    ctx.beginPath();
+                    ctx.arc(cx, cy, r, 0, Math.PI * 2);
+                    ctx.fill();
+            }
+
+            ctx.globalAlpha = 1;
+            ctx.shadowBlur = 0;
+
+            // 计时环（特殊食物）
+            if (ft.timer > 0) {
+                const totalMs = ft.timer;
+                const leftMs = foodRemainingMs();
+                const ratio = leftMs / totalMs;
+                ctx.strokeStyle = ft.color;
+                ctx.lineWidth = 2;
+                ctx.globalAlpha = 0.5;
+                ctx.beginPath();
+                ctx.arc(cx, cy, r + 4, -Math.PI / 2, -Math.PI / 2 - Math.PI * 2 * ratio, true);
+                ctx.stroke();
+                ctx.globalAlpha = 1;
+            }
+        }
+
+        function drawStar(cx, cy, innerR, outerR, points) {
+            ctx.beginPath();
+            for (let i = 0; i < points * 2; i++) {
+                const r = i % 2 === 0 ? outerR : innerR;
+                const angle = (i * Math.PI) / points - Math.PI / 2;
+                const x = cx + Math.cos(angle) * r;
+                const y = cy + Math.sin(angle) * r;
+                if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+            }
+            ctx.closePath();
+            ctx.fill();
+        }
+
+        function drawHeart(cx, cy, size) {
+            const s = size * 0.7;
+            ctx.beginPath();
+            ctx.moveTo(cx, cy + s);
+            ctx.bezierCurveTo(cx - s, cy + s * 0.3, cx - s, cy - s * 0.6, cx, cy - s * 0.2);
+            ctx.bezierCurveTo(cx + s, cy - s * 0.6, cx + s, cy + s * 0.3, cx, cy + s);
+            ctx.fill();
+        }
+
+        function drawDiamond(cx, cy, r) {
+            ctx.beginPath();
+            ctx.moveTo(cx, cy - r);
+            ctx.lineTo(cx + r * 0.7, cy);
+            ctx.lineTo(cx, cy + r);
+            ctx.lineTo(cx - r * 0.7, cy);
+            ctx.closePath();
+            ctx.fill();
+        }
+
         function draw() {
             ctx.clearRect(0, 0, CANVAS_SIZE, CANVAS_SIZE);
 
@@ -532,38 +949,29 @@
             ctx.fillStyle = BG_COLOR;
             ctx.fillRect(0, 0, CANVAS_SIZE, CANVAS_SIZE);
 
+            // Combo ≥5 时边框发光
+            if (comboCount >= 5 && running) {
+                const intensity = 0.15 + 0.1 * Math.sin(performance.now() / 200);
+                ctx.strokeStyle = `rgba(255, 215, 0, ${intensity})`;
+                ctx.lineWidth = 8;
+                ctx.strokeRect(4, 4, CANVAS_SIZE - 8, CANVAS_SIZE - 8);
+            }
+
             // 边框
             ctx.strokeStyle = BORDER_COLOR;
             ctx.lineWidth = 4;
             ctx.strokeRect(2, 2, CANVAS_SIZE - 4, CANVAS_SIZE - 4);
 
-            // 淡色网格
+            // 网格
             ctx.strokeStyle = "rgba(255, 255, 255, 0.03)";
             ctx.lineWidth = 0.5;
             for (let i = GRID_SIZE; i < CANVAS_SIZE; i += GRID_SIZE) {
-                ctx.beginPath();
-                ctx.moveTo(i, 0);
-                ctx.lineTo(i, CANVAS_SIZE);
-                ctx.stroke();
-                ctx.beginPath();
-                ctx.moveTo(0, i);
-                ctx.lineTo(CANVAS_SIZE, i);
-                ctx.stroke();
+                ctx.beginPath(); ctx.moveTo(i, 0); ctx.lineTo(i, CANVAS_SIZE); ctx.stroke();
+                ctx.beginPath(); ctx.moveTo(0, i); ctx.lineTo(CANVAS_SIZE, i); ctx.stroke();
             }
 
-            // 食物（带发光）
-            ctx.fillStyle = FOOD_COLOR;
-            ctx.shadowColor = FOOD_COLOR;
-            ctx.shadowBlur = 8;
-            ctx.beginPath();
-            ctx.arc(
-                food.x + GRID_SIZE / 2,
-                food.y + GRID_SIZE / 2,
-                GRID_SIZE / 2 - 2,
-                0, Math.PI * 2
-            );
-            ctx.fill();
-            ctx.shadowBlur = 0;
+            // 食物
+            drawFood();
 
             // 蛇
             for (let i = snake.length - 1; i >= 0; i--) {
@@ -571,7 +979,6 @@
                 const color = running
                     ? (i === 0 ? SNAKE_HEAD_COLOR : SNAKE_BODY_COLORS[(i - 1) % SNAKE_BODY_COLORS.length])
                     : GAME_OVER_SNAKE_COLOR;
-
                 ctx.fillStyle = color;
                 ctx.shadowColor = color;
                 ctx.shadowBlur = running ? 6 : 10;
@@ -580,67 +987,105 @@
                 ctx.shadowBlur = 0;
             }
 
+            // 粒子
+            for (const p of particles) {
+                ctx.globalAlpha = p.life / p.maxLife;
+                ctx.fillStyle = p.color;
+                ctx.fillRect(p.x - p.size / 2, p.y - p.size / 2, p.size, p.size);
+            }
+            ctx.globalAlpha = 1;
+
+            // 浮动文字
+            for (const ft of floatingTexts) {
+                const progress = 1 - ft.life / ft.maxLife;
+                ctx.globalAlpha = ft.life / ft.maxLife;
+                ctx.fillStyle = ft.color;
+                ctx.font = "bold 14px 'Courier New', monospace";
+                ctx.textAlign = "center";
+                ctx.fillText(ft.text, ft.x, ft.y - progress * 30);
+                ctx.textAlign = "start";
+            }
+            ctx.globalAlpha = 1;
+
+            // 暂停覆盖层
+            if (paused && running) {
+                ctx.fillStyle = "rgba(0, 0, 0, 0.5)";
+                ctx.fillRect(0, 0, CANVAS_SIZE, CANVAS_SIZE);
+                ctx.fillStyle = "#ffffff";
+                ctx.font = "bold 36px 'Courier New', monospace";
+                ctx.textAlign = "center";
+                ctx.fillText("PAUSED", CANVAS_SIZE / 2, CANVAS_SIZE / 2);
+                ctx.font = "14px 'Courier New', monospace";
+                ctx.fillStyle = "#cccccc";
+                ctx.fillText("Press P to resume", CANVAS_SIZE / 2, CANVAS_SIZE / 2 + 40);
+                ctx.textAlign = "start";
+            }
+
             // Game Over 覆盖层
             if (!running) {
                 ctx.fillStyle = "rgba(0, 0, 0, 0.65)";
                 ctx.fillRect(0, 0, CANVAS_SIZE, CANVAS_SIZE);
-
                 ctx.fillStyle = "#ffffff";
                 ctx.font = "bold 40px 'Courier New', monospace";
                 ctx.textAlign = "center";
                 ctx.fillText("GAME OVER", CANVAS_SIZE / 2, CANVAS_SIZE / 2 - 30);
-
                 ctx.font = "bold 22px 'Courier New', monospace";
                 ctx.fillText(`Final Score: ${score}`, CANVAS_SIZE / 2, CANVAS_SIZE / 2 + 20);
-
+                if (bestCombo > 1) {
+                    ctx.font = "16px 'Courier New', monospace";
+                    ctx.fillStyle = "#ffd700";
+                    ctx.fillText(`Best Combo: x${bestCombo}`, CANVAS_SIZE / 2, CANVAS_SIZE / 2 + 50);
+                }
                 ctx.font = "14px 'Courier New', monospace";
                 ctx.fillStyle = "#cccccc";
-                ctx.fillText(
-                    "Press SPACE to restart",
-                    CANVAS_SIZE / 2,
-                    CANVAS_SIZE / 2 + 60
-                );
+                ctx.fillText("Press SPACE to restart", CANVAS_SIZE / 2, CANVAS_SIZE / 2 + 80);
                 ctx.textAlign = "start";
             }
         }
 
         // ============================================================
-        // 游戏循环 — requestAnimationFrame + 固定时间步长
+        // 游戏循环
         // ============================================================
         function gameLoop(timestamp) {
-            if (!running) {
-                // 游戏结束只渲染最后一帧，不再请求新帧
-                draw();
-                animFrameId = null;
+            if (!running || paused) {
+                if (!running) { draw(); animFrameId = null; }
                 return;
             }
 
-            // 首帧初始化
-            if (lastTime === 0) {
-                lastTime = timestamp;
-            }
-
-            // 计算帧间隔，累加到计时器
-            const delta = timestamp - lastTime;
+            if (lastTime === 0) lastTime = timestamp;
+            const delta = Math.min(timestamp - lastTime, 500);
             lastTime = timestamp;
+            accumulator += delta;
 
-            // 防止切 tab 回来时 delta 爆炸（上限 500ms）
-            accumulator += Math.min(delta, 500);
-
-            // 固定时间步长：精确调用 move()
-            while (accumulator >= speed) {
+            const spd = effectiveSpeed();
+            while (accumulator >= spd) {
                 move();
-                if (!running) {
-                    draw();
-                    animFrameId = null;
-                    return;
-                }
-                accumulator -= speed;
+                if (!running) { draw(); animFrameId = null; return; }
+                accumulator -= spd;
             }
 
-            // 每帧渲染（渲染与逻辑分离，保证画面流畅）
-            draw();
+            // 检查特殊食物过期
+            if (currentFoodType.timer > 0 && foodRemainingMs() <= 0) {
+                spawnFood();
+            }
 
+            // 更新粒子
+            const dtSec = delta / 1000;
+            for (let i = particles.length - 1; i >= 0; i--) {
+                const p = particles[i];
+                p.x += p.vx * dtSec;
+                p.y += p.vy * dtSec;
+                p.life -= dtSec;
+                if (p.life <= 0) particles.splice(i, 1);
+            }
+
+            // 更新浮动文字
+            for (let i = floatingTexts.length - 1; i >= 0; i--) {
+                floatingTexts[i].life -= dtSec;
+                if (floatingTexts[i].life <= 0) floatingTexts.splice(i, 1);
+            }
+
+            draw();
             animFrameId = requestAnimationFrame(gameLoop);
         }
 
@@ -650,11 +1095,11 @@
         function start() {
             loadHighScore();
             highScoreEl.textContent = highScore;
+            updateSpeedUI();
             initGame();
             draw();
             lastTime = 0;
             accumulator = 0;
-            // Audio 在首次 keydown/click 时初始化（浏览器策略要求）
             animFrameId = requestAnimationFrame(gameLoop);
         }
 
