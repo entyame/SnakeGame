@@ -19,6 +19,7 @@
             height: 100vh;
             font-family: 'Courier New', Courier, monospace;
             overflow: hidden;
+            user-select: none;
         }
 
         .game-wrapper {
@@ -26,6 +27,12 @@
             flex-direction: column;
             align-items: center;
             gap: 12px;
+        }
+
+        .top-bar {
+            display: flex;
+            align-items: center;
+            gap: 16px;
         }
 
         .score-bar {
@@ -42,6 +49,31 @@
 
         .score-bar .high {
             color: #ffd700;
+        }
+
+        .btn-mute {
+            width: 44px;
+            height: 44px;
+            border-radius: 8px;
+            border: 2px solid #e94560;
+            background: #16213e;
+            color: #ffffff;
+            font-size: 20px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s;
+            line-height: 1;
+        }
+
+        .btn-mute:hover {
+            background: #1f2d4a;
+        }
+
+        .btn-mute.muted {
+            border-color: #555;
+            color: #555;
         }
 
         canvas {
@@ -65,14 +97,18 @@
 </head>
 <body>
     <div class="game-wrapper">
-        <div class="score-bar">
-            Score: <span id="score">0</span>&nbsp;&nbsp;&nbsp;
-            🏆 High Score: <span class="high" id="highScore">0</span>
+        <div class="top-bar">
+            <div class="score-bar">
+                Score: <span id="score">0</span>&nbsp;&nbsp;&nbsp;
+                🏆 High Score: <span class="high" id="highScore">0</span>
+            </div>
+            <button class="btn-mute" id="btnMute" title="Toggle Music / SFX">🔊</button>
         </div>
         <canvas id="gameCanvas"></canvas>
         <div class="controls-hint">
             <span>↑↓←→</span> or <span>WASD</span> to move &nbsp;|&nbsp;
-            <span>Space</span> to restart
+            <span>Space</span> to restart &nbsp;|&nbsp;
+            <span>M</span> toggle music
         </div>
     </div>
 
@@ -82,11 +118,11 @@
         // ============================================================
         const CANVAS_SIZE = 600;
         const GRID_SIZE = 20;
-        const COLS = CANVAS_SIZE / GRID_SIZE;  // 30
-        const ROWS = CANVAS_SIZE / GRID_SIZE;  // 30
+        const COLS = CANVAS_SIZE / GRID_SIZE;
+        const ROWS = CANVAS_SIZE / GRID_SIZE;
         const INITIAL_SPEED = 120;   // 初始移动间隔（毫秒）
-        const MIN_SPEED = 40;        // 最快速度
-        const SPEED_STEP = 2;        // 每次吃食物加速量
+        const MIN_SPEED = 40;
+        const SPEED_STEP = 2;
         const SCORE_PER_FOOD = 10;
 
         // 颜色方案
@@ -104,6 +140,7 @@
         const ctx = canvas.getContext("2d");
         const scoreEl = document.getElementById("score");
         const highScoreEl = document.getElementById("highScore");
+        const btnMute = document.getElementById("btnMute");
 
         canvas.width = CANVAS_SIZE;
         canvas.height = CANVAS_SIZE;
@@ -119,7 +156,196 @@
         let highScore = 0;
         let speed = INITIAL_SPEED;
         let running = true;
-        let gameLoopId = null;
+
+        // requestAnimationFrame 计时
+        let lastTime = 0;
+        let accumulator = 0;
+        let animFrameId = null;
+
+        // ============================================================
+        // 音频引擎 — 8-bit Chiptune
+        // ============================================================
+        const Audio = {
+            ctx: null,
+            masterGain: null,
+            musicGain: null,
+            sfxGain: null,
+            muted: false,
+            musicStarted: false,
+            musicTimer: null,
+            musicNoteIdx: 0,
+            musicNextTime: 0,
+            bassNoteIdx: 0,
+            bassNextTime: 0,
+
+            // 频率表
+            noteToFreq(note) {
+                const map = {
+                    'C2': 65.41, 'D2': 73.42, 'E2': 82.41, 'F2': 87.31,
+                    'G2': 98.00, 'A2': 110.00, 'B2': 123.47,
+                    'C3': 130.81, 'D3': 146.83, 'E3': 164.81, 'F3': 174.61,
+                    'G3': 196.00, 'A3': 220.00, 'B3': 246.94,
+                    'C4': 261.63, 'D4': 293.66, 'E4': 329.63, 'F4': 349.23,
+                    'G4': 392.00, 'A4': 440.00, 'B4': 493.88,
+                    'C5': 523.25, 'D5': 587.33, 'E5': 659.25, 'F5': 698.46,
+                    'G5': 783.99, 'A5': 880.00, 'B5': 987.77,
+                    'C6': 1046.50,
+                };
+                return map[note] || 0;
+            },
+
+            // 每个 step 的时长（秒）
+            stepDuration: 0.14,
+
+            // 主旋律：[音符, steps]
+            melody: [
+                ['E5', 1], ['E5', 1], ['E5', 1], ['C5', 1], ['E5', 2], ['G5', 2],
+                ['A5', 1], ['G5', 1], ['E5', 1], ['C5', 1], ['D5', 1], ['E5', 1], ['C5', 1], ['D5', 1],
+                ['E5', 1], ['D5', 1], ['E5', 1], ['G5', 1], ['A5', 2], ['G5', 2],
+                ['E5', 1], ['D5', 1], ['C5', 1], ['D5', 1], ['E5', 1], ['C5', 1], ['A4', 2],
+                ['C5', 1], ['D5', 1], ['E5', 1], ['C5', 1], ['A4', 1], ['C5', 1], ['D5', 2],
+                ['E5', 1], ['G5', 1], ['A5', 1], ['G5', 1], ['E5', 1], ['C5', 1], ['D5', 2],
+                ['E5', 1], ['C5', 1], ['D5', 1], ['E5', 1], ['G5', 2], ['A5', 2],
+                ['G5', 1], ['E5', 1], ['C5', 1], ['D5', 1], ['E5', 1], ['C5', 1], ['D5', 2],
+            ],
+
+            // 低音线：[音符, steps]
+            bassLine: [
+                ['C3', 4], ['G3', 4], ['A3', 8],
+                ['F3', 4], ['C3', 4], ['G3', 8],
+                ['A3', 4], ['E3', 4], ['F3', 4], ['G3', 4],
+                ['C3', 8], ['G3', 8],
+            ],
+
+            // 初始化（必须在用户交互后调用）
+            init() {
+                if (this.ctx) return;
+                try {
+                    this.ctx = new (window.AudioContext || window.webkitAudioContext)();
+                    this.masterGain = this.ctx.createGain();
+                    this.masterGain.gain.value = 0.25;
+                    this.masterGain.connect(this.ctx.destination);
+
+                    this.musicGain = this.ctx.createGain();
+                    this.musicGain.gain.value = 0.18;
+                    this.musicGain.connect(this.masterGain);
+
+                    this.sfxGain = this.ctx.createGain();
+                    this.sfxGain.gain.value = 0.35;
+                    this.sfxGain.connect(this.masterGain);
+                } catch (e) {
+                    console.warn("Web Audio API not available");
+                }
+            },
+
+            // 播放一个音符
+            playNote(freq, startTime, duration, type, gainNode) {
+                if (!this.ctx || this.muted) return;
+                if (freq <= 0) return;  // 休止符
+                const osc = this.ctx.createOscillator();
+                const env = this.ctx.createGain();
+                osc.type = type || 'square';
+                osc.frequency.value = freq;
+                const vol = gainNode === this.musicGain ? 0.18 : 0.35;
+                env.gain.setValueAtTime(vol, startTime);
+                env.gain.setValueAtTime(vol * 0.6, startTime + duration * 0.3);
+                env.gain.exponentialRampToValueAtTime(0.001, startTime + duration);
+                osc.connect(env);
+                env.connect(gainNode || this.musicGain);
+                osc.start(startTime);
+                osc.stop(startTime + duration + 0.01);
+            },
+
+            // 调度前方约 2 秒的音乐
+            scheduleAhead() {
+                if (!this.ctx || this.muted) return;
+                const lookAhead = 2.0;
+                const now = this.ctx.currentTime;
+
+                // 初始化
+                if (this.musicNextTime === 0) {
+                    this.musicNextTime = now + 0.1;
+                    this.bassNextTime = now + 0.1;
+                }
+
+                // 调度旋律
+                while (this.musicNextTime < now + lookAhead) {
+                    const [note, steps] = this.melody[this.musicNoteIdx];
+                    const dur = steps * this.stepDuration;
+                    this.playNote(this.noteToFreq(note), this.musicNextTime, dur * 0.85, 'square', this.musicGain);
+                    this.musicNextTime += dur;
+                    this.musicNoteIdx = (this.musicNoteIdx + 1) % this.melody.length;
+                }
+
+                // 调度低音
+                while (this.bassNextTime < now + lookAhead) {
+                    const [note, steps] = this.bassLine[this.bassNoteIdx];
+                    const dur = steps * this.stepDuration;
+                    this.playNote(this.noteToFreq(note), this.bassNextTime, dur * 0.9, 'triangle', this.musicGain);
+                    this.bassNextTime += dur;
+                    this.bassNoteIdx = (this.bassNoteIdx + 1) % this.bassLine.length;
+                }
+            },
+
+            startMusic() {
+                if (this.musicStarted || this.muted) return;
+                this.init();
+                if (!this.ctx) return;
+                this.musicStarted = true;
+                this.musicNoteIdx = 0;
+                this.bassNoteIdx = 0;
+                this.musicNextTime = 0;
+                this.bassNextTime = 0;
+                this.scheduleAhead();
+                // 每 150ms 检查是否需要补充调度
+                this.musicTimer = setInterval(() => this.scheduleAhead(), 150);
+            },
+
+            stopMusic() {
+                if (this.musicTimer) {
+                    clearInterval(this.musicTimer);
+                    this.musicTimer = null;
+                }
+                this.musicStarted = false;
+                this.musicNextTime = 0;
+                this.bassNextTime = 0;
+            },
+
+            // 🍎 吃食物音效 — 快速上行琶音
+            playEat() {
+                if (!this.ctx || this.muted) return;
+                const now = this.ctx.currentTime;
+                const notes = ['C5', 'E5', 'G5', 'C6'];
+                notes.forEach((n, i) => {
+                    this.playNote(this.noteToFreq(n), now + i * 0.04, 0.12, 'square', this.sfxGain);
+                });
+            },
+
+            // 💀 游戏结束音效 — 下行悲鸣
+            playGameOver() {
+                if (!this.ctx || this.muted) return;
+                const now = this.ctx.currentTime;
+                const notes = ['G5', 'E5', 'C5', 'G4', 'E4', 'C4'];
+                notes.forEach((n, i) => {
+                    this.playNote(this.noteToFreq(n), now + i * 0.12, 0.2, 'square', this.sfxGain);
+                });
+            },
+
+            toggle() {
+                this.init();
+                if (!this.ctx) return;
+                this.muted = !this.muted;
+                if (this.muted) {
+                    this.stopMusic();
+                    btnMute.textContent = '🔇';
+                    btnMute.classList.add('muted');
+                } else {
+                    btnMute.textContent = '🔊';
+                    btnMute.classList.remove('muted');
+                    this.startMusic();
+                }
+            },
+        };
 
         // ============================================================
         // 高分存取（localStorage）
@@ -136,16 +362,13 @@
         function saveHighScore() {
             try {
                 localStorage.setItem("snake_high_score", String(highScore));
-            } catch (e) {
-                // localStorage 不可用时静默忽略
-            }
+            } catch (e) { /* 忽略 */ }
         }
 
         // ============================================================
         // 初始化 / 重置
         // ============================================================
         function initGame() {
-            // 蛇从中间开始，初始3节（头 + 2节身体），方向朝右
             const startX = Math.floor(COLS / 2) * GRID_SIZE;
             const startY = Math.floor(ROWS / 2) * GRID_SIZE;
             snake = [
@@ -158,12 +381,13 @@
             score = 0;
             speed = INITIAL_SPEED;
             running = true;
+            accumulator = 0;
+            lastTime = 0;
             scoreEl.textContent = "0";
             spawnFood();
         }
 
         function spawnFood() {
-            // 收集蛇占用的格子
             const occupied = new Set(snake.map(seg => `${seg.x},${seg.y}`));
             const freeCells = [];
             for (let col = 0; col < COLS; col++) {
@@ -175,8 +399,7 @@
                 }
             }
             if (freeCells.length === 0) {
-                // 胜利！但实际上蛇占满格子才会出现
-                gameOver(true);
+                gameOver();
                 return;
             }
             const pick = freeCells[Math.floor(Math.random() * freeCells.length)];
@@ -185,9 +408,25 @@
         }
 
         // ============================================================
-        // 输入处理
+        // 输入处理 — 只记录方向意图，不干扰游戏循环
         // ============================================================
+        const opposites = { up: "down", down: "up", left: "right", right: "left" };
+
+        function handleDirectionInput(newDir) {
+            // 忽略反向指令
+            if (opposites[newDir] !== direction) {
+                nextDirection = newDir;
+            }
+        }
+
         document.addEventListener("keydown", (e) => {
+            // 首次交互时初始化音频
+            if (!Audio.ctx) {
+                Audio.init();
+                Audio.startMusic();
+            }
+
+            // 游戏结束状态 — 只响应空格
             if (!running) {
                 if (e.code === "Space") {
                     e.preventDefault();
@@ -196,25 +435,21 @@
                 return;
             }
 
-            const opposites = {
-                "up": "down", "down": "up",
-                "left": "right", "right": "left",
-            };
-
-            let newDir = null;
+            // 方向输入 — 仅记录意图，不阻塞、不重复处理
             switch (e.code) {
-                case "ArrowUp":    case "KeyW": newDir = "up";    break;
-                case "ArrowDown":  case "KeyS": newDir = "down";  break;
-                case "ArrowLeft":  case "KeyA": newDir = "left";  break;
-                case "ArrowRight": case "KeyD": newDir = "right"; break;
-                default: return;
+                case "ArrowUp":    case "KeyW": e.preventDefault(); handleDirectionInput("up");    break;
+                case "ArrowDown":  case "KeyS": e.preventDefault(); handleDirectionInput("down");  break;
+                case "ArrowLeft":  case "KeyA": e.preventDefault(); handleDirectionInput("left");  break;
+                case "ArrowRight": case "KeyD": e.preventDefault(); handleDirectionInput("right"); break;
+                case "KeyM":       e.preventDefault(); Audio.toggle(); break;
             }
+        });
 
-            e.preventDefault();
-            // 不允许反向
-            if (opposites[newDir] !== direction) {
-                nextDirection = newDir;
-            }
+        // 静音按钮
+        btnMute.addEventListener("click", () => {
+            Audio.init();
+            Audio.startMusic();
+            Audio.toggle();
         });
 
         // ============================================================
@@ -235,16 +470,16 @@
                 case "right": newX += GRID_SIZE; break;
             }
 
-            // 撞墙检测
+            // 撞墙
             if (newX < 0 || newX >= CANVAS_SIZE || newY < 0 || newY >= CANVAS_SIZE) {
-                gameOver(false);
+                gameOver();
                 return;
             }
 
-            // 撞自己检测（跳过尾巴，因为尾巴即将移走）
+            // 撞自己（跳过最后一段尾巴，因为它即将被移除）
             for (let i = 0; i < snake.length - 1; i++) {
                 if (snake[i].x === newX && snake[i].y === newY) {
-                    gameOver(false);
+                    gameOver();
                     return;
                 }
             }
@@ -252,7 +487,7 @@
             // 插入新头部
             snake.unshift({ x: newX, y: newY });
 
-            // 检查是否吃到食物
+            // 吃到食物
             if (newX === food.x && newY === food.y) {
                 score += SCORE_PER_FOOD;
                 scoreEl.textContent = score;
@@ -261,34 +496,30 @@
                     highScoreEl.textContent = highScore;
                     saveHighScore();
                 }
-                // 加速
                 speed = Math.max(MIN_SPEED, speed - SPEED_STEP);
+                Audio.playEat();
                 spawnFood();
-                // 不吃食物时不移除尾巴 = 身体变长
             } else {
-                snake.pop(); // 移除尾巴
+                snake.pop();
             }
         }
 
-        function gameOver(won) {
+        function gameOver() {
             running = false;
             direction = "stop";
             nextDirection = "stop";
-            if (gameLoopId) {
-                clearTimeout(gameLoopId);
-                gameLoopId = null;
-            }
-            draw(); // 重绘以显示 game over 画面
+            Audio.stopMusic();
+            Audio.playGameOver();
         }
 
         function restart() {
-            if (gameLoopId) {
-                clearTimeout(gameLoopId);
-                gameLoopId = null;
-            }
             initGame();
+            Audio.stopMusic();
+            Audio.startMusic();
+            lastTime = 0;
+            accumulator = 0;
             draw();
-            scheduleLoop();
+            animFrameId = requestAnimationFrame(gameLoop);
         }
 
         // ============================================================
@@ -301,12 +532,12 @@
             ctx.fillStyle = BG_COLOR;
             ctx.fillRect(0, 0, CANVAS_SIZE, CANVAS_SIZE);
 
-            // 边框（4px 宽）
+            // 边框
             ctx.strokeStyle = BORDER_COLOR;
             ctx.lineWidth = 4;
             ctx.strokeRect(2, 2, CANVAS_SIZE - 4, CANVAS_SIZE - 4);
 
-            // 网格线（淡色，可选）
+            // 淡色网格
             ctx.strokeStyle = "rgba(255, 255, 255, 0.03)";
             ctx.lineWidth = 0.5;
             for (let i = GRID_SIZE; i < CANVAS_SIZE; i += GRID_SIZE) {
@@ -320,7 +551,7 @@
                 ctx.stroke();
             }
 
-            // 食物
+            // 食物（带发光）
             ctx.fillStyle = FOOD_COLOR;
             ctx.shadowColor = FOOD_COLOR;
             ctx.shadowBlur = 8;
@@ -334,7 +565,7 @@
             ctx.fill();
             ctx.shadowBlur = 0;
 
-            // 蛇身
+            // 蛇
             for (let i = snake.length - 1; i >= 0; i--) {
                 const seg = snake[i];
                 const color = running
@@ -342,7 +573,7 @@
                     : GAME_OVER_SNAKE_COLOR;
 
                 ctx.fillStyle = color;
-                ctx.shadowColor = running ? color : GAME_OVER_SNAKE_COLOR;
+                ctx.shadowColor = color;
                 ctx.shadowBlur = running ? 6 : 10;
                 const pad = 1;
                 ctx.fillRect(seg.x + pad, seg.y + pad, GRID_SIZE - pad * 2, GRID_SIZE - pad * 2);
@@ -351,21 +582,17 @@
 
             // Game Over 覆盖层
             if (!running) {
-                // 半透明遮罩
                 ctx.fillStyle = "rgba(0, 0, 0, 0.65)";
                 ctx.fillRect(0, 0, CANVAS_SIZE, CANVAS_SIZE);
 
-                // GAME OVER 文字
                 ctx.fillStyle = "#ffffff";
                 ctx.font = "bold 40px 'Courier New', monospace";
                 ctx.textAlign = "center";
                 ctx.fillText("GAME OVER", CANVAS_SIZE / 2, CANVAS_SIZE / 2 - 30);
 
-                // 最终分数
                 ctx.font = "bold 22px 'Courier New', monospace";
                 ctx.fillText(`Final Score: ${score}`, CANVAS_SIZE / 2, CANVAS_SIZE / 2 + 20);
 
-                // 提示
                 ctx.font = "14px 'Courier New', monospace";
                 ctx.fillStyle = "#cccccc";
                 ctx.fillText(
@@ -378,18 +605,43 @@
         }
 
         // ============================================================
-        // 游戏循环
+        // 游戏循环 — requestAnimationFrame + 固定时间步长
         // ============================================================
-        function gameLoop() {
-            if (!running) return;
+        function gameLoop(timestamp) {
+            if (!running) {
+                // 游戏结束只渲染最后一帧，不再请求新帧
+                draw();
+                animFrameId = null;
+                return;
+            }
 
-            move();
+            // 首帧初始化
+            if (lastTime === 0) {
+                lastTime = timestamp;
+            }
+
+            // 计算帧间隔，累加到计时器
+            const delta = timestamp - lastTime;
+            lastTime = timestamp;
+
+            // 防止切 tab 回来时 delta 爆炸（上限 500ms）
+            accumulator += Math.min(delta, 500);
+
+            // 固定时间步长：精确调用 move()
+            while (accumulator >= speed) {
+                move();
+                if (!running) {
+                    draw();
+                    animFrameId = null;
+                    return;
+                }
+                accumulator -= speed;
+            }
+
+            // 每帧渲染（渲染与逻辑分离，保证画面流畅）
             draw();
-            gameLoopId = setTimeout(gameLoop, speed);
-        }
 
-        function scheduleLoop() {
-            gameLoopId = setTimeout(gameLoop, speed);
+            animFrameId = requestAnimationFrame(gameLoop);
         }
 
         // ============================================================
@@ -400,7 +652,10 @@
             highScoreEl.textContent = highScore;
             initGame();
             draw();
-            scheduleLoop();
+            lastTime = 0;
+            accumulator = 0;
+            // Audio 在首次 keydown/click 时初始化（浏览器策略要求）
+            animFrameId = requestAnimationFrame(gameLoop);
         }
 
         start();
